@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<script src="https://www.paypalobjects.com/api/checkout.js"></script> -->
+  <!-- Load the required components. -->
+  <title>Sample Paypal Integration - by Yu</title>
+  <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script>
+  <script src="https://js.braintreegateway.com/web/3.25.0/js/client.min.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.25.0/js/paypal-checkout.min.js"></script>
+  <style>
+    .pp {
+      display: block;
+      margin: auto;
+      padding: 10px
+    }
+    img {
+      display: block;
+      height: 427px;
+      width: 643px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Come and support space program with Paypal!</h1>
+  
+  <img src="{{url_for('static', filename='66a9087.jpg')}}">
+
+  <div id="paypal-button" class="pp"></div>
+
+  <script>
+    var amount = 6.66
+
+    paypal.Button.render({
+      braintree: braintree,
+      // Other configuration
+      style: {
+        label: 'buynow',
+        fundingicons: true, // optional
+        branding: true, // optional
+        size:  'large', // small | medium | large | responsive
+        shape: 'rect',   // pill | rect
+        color: 'gold'   // gold | blue | silve | black
+      },
+      client: {
+        // sandbox: {{ client_token }}
+        sandbox: paypal.request.get('/client_token')
+      },
+      env: 'sandbox',
+
+      payment: function (data, actions) {
+        return actions.braintree.create({
+          flow: 'checkout', // Required
+          amount: amount, // Required
+          currency: 'USD', // Required
+          // enableShippingAddress: true,
+          // shippingAddressEditable: false,
+          // shippingAddressOverride: {
+          //   recipientName: 'Scruff McGruff',
+          //   line1: '1234 Main St.',
+          //   line2: 'Unit 1',
+          //   city: 'Chicago',
+          //   countryCode: 'US',
+          //   postalCode: '60652',
+          //   state: 'IL',
+          //   phone: '123.456.7890'
+          // }
+        });
+      },
+
+      onAuthorize: function (payload) {
+        // Submit `payload.nonce` to your server.
+        console.log('nonce: ' + payload.nonce)
+        paypal.request.post('/checkout', {
+            nonce: payload.nonce,
+            amount: amount.toString()
+          }).then(function(res){ window.alert(res);})
+      },
+    }, '#paypal-button');
+  </script>
+
+</body>
