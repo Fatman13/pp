@@ -71,6 +71,7 @@ def create_purchase():
 		}
 	})
 	mes = ''
+	
 	if result.is_success:
 		mes = "Success ID: ".format(result.transaction.id)
 	else:
