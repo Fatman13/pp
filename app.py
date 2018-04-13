@@ -7,6 +7,7 @@ from flask import request
 import braintree
 
 import os, json, random
+from pprint import pprint
 
 app = Flask(__name__)
 
@@ -73,7 +74,8 @@ def create_purchase():
 	mes = ''
 	
 	if result.is_success:
-		mes = "Success ID: ".format(result.transaction.id)
+		mes = "Success ID: {}".format(result.transaction.id)
+		# pprint(vars(result))
 	else:
 		mes = format(result.message)
 	return mes
